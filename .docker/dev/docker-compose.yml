@@ -1,0 +1,23 @@
+# the version of the docker-compose file
+version: "2.1"
+
+# list of services - meaning containers - to be managed by docker-compose
+services:
+
+  # the api-server
+  api-server:
+
+    # build the api-server with the Dockerfile found at context
+    build:
+      context: services/api-server
+    # name its this
+    image: kannji_api-server
+
+    restart: on-failure
+
+    ports:
+      - "${HTTP_PORT}:8000"
+
+    # for development we mount the api-server-code into the container, this way changes made to the code are directly synced with the container
+    volumes:
+      - ${API_SERVER_CODE_PATH}:/kannji/api-server
