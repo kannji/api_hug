@@ -11,7 +11,7 @@ services:
     build:
       context: services/api-server
     # name its this
-    image: kannji_api-server
+    image: kannji_hug_api-server
 
     restart: on-failure
 
@@ -21,3 +21,6 @@ services:
     # for development we mount the api-server-code into the container, this way changes made to the code are directly synced with the container
     volumes:
       - ${API_SERVER_CODE_PATH}:/kannji/api-server
+
+    # the command to start the service with
+    command: "routings.py"

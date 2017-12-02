@@ -18,6 +18,3 @@ ENTRYPOINT ["/docker-entrypoint.sh"]
 # image config
 WORKDIR /kannji/api-server/
 EXPOSE 80
-
-# command
-CMD ["kannji.py"]
