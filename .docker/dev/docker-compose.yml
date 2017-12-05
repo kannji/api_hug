@@ -4,7 +4,33 @@ version: "2.1"
 # list of services - meaning containers - to be managed by docker-compose
 services:
 
-  # the api-server
+  # the user-db container
+  db:
+
+    image: postgres
+
+    volumes:
+      - user-db:/var/lib/postgresql/data/
+
+    # environment variables which will be accessible in the running container
+    environment:
+      - POSTGRES_DB=${DB_NAME}
+      - POSTGRES_USER=${DB_USERNAME}
+      - POSTGRES_PASSWORD=${DB_PASSWORD}
+
+    # this defines how this container will be rated as "healthy"
+    healthcheck:
+      test: ["CMD", "pg_isready"]
+      interval: 10s
+      timeout: 10s
+      retries: 15
+
+    networks:
+      default:
+        aliases:
+          - ${DB_HOSTNAME}
+
+  # the server
   api-server:
 
     # build the api-server with the Dockerfile found at context
@@ -12,6 +38,11 @@ services:
       context: services/api-server
     # name its this
     image: kannji_hug_api-server
+
+    depends_on:
+      # the status of the api-db needs to be healthy (see above)
+      db:
+        condition: service_healthy
 
     restart: on-failure
 
@@ -24,3 +55,11 @@ services:
 
     # the command to start the service with
     command: "routings.py"
+
+    networks:
+      default:
+        aliases:
+          - ${API_SERVER_HOSTNAME}
+
+volumes:
+  user-db:
