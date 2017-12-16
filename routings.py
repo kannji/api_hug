@@ -1,6 +1,6 @@
 import hug
 
-from v1 import learning_lists, index
+from endpoints.v1 import learning_lists, index
 
 router = hug.route.API(__name__)
 
