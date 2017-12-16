@@ -1,7 +1,6 @@
 import hug
 
-from models import LearningEntry
-from models import LearningList
+from models import LearningEntry, LearningList
 
 
 def get_lists_page(page_index: hug.types.greater_than(-1), page_size: hug.types.greater_than(0)):
