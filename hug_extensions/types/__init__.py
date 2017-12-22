@@ -1,0 +1,1 @@
+from hug_extensions.types.json_structure import JSONStructure

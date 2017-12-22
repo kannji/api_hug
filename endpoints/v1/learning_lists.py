@@ -1,5 +1,7 @@
 import hug
+from hug import HTTP_201
 
+import hug_extensions
 from models import LearningEntry, LearningList
 
 
@@ -27,11 +29,19 @@ def get_list_meta(list_id: hug.types.uuid):
 	return learning_list_meta_query.to_dict()
 
 
-def create_list(body: hug.types.json):
+list_structure = {
+	'name': hug.types.text,
+	'description': hug.types.text
+}
+
+
+def create_list(body: hug_extensions.types.JSONStructure(list_structure), response):
 	new_list = LearningList(name=body['name'], description=body['description'])
 	# as wer are not using a integer id, but a string containing a uuid, auto-increment on db side does not work,
 	# thus we need to explicitly state that we want to insert.
 	new_list.save(force_insert=True)
+	# set correct response status
+	response.status = HTTP_201
 	return new_list.to_dict()
 
 
@@ -47,10 +57,20 @@ def get_list_entries_page(list_id: hug.types.uuid, page_index: hug.types.greater
 	return learning_list_entries_page
 
 
-def create_list_entry(list_id: hug.types.uuid, body: hug.types.json):
+list_entry_structure = {
+	'kanji_writing': hug.types.text,
+	'kana_writing': hug.types.text,
+	'translation': hug.types.text
+}
+
+
+def create_list_entry(list_id: hug.types.uuid, body: hug_extensions.types.JSONStructure(list_entry_structure),
+                      response):
 	new_list_entry = LearningEntry(learning_list=list_id, kanji_writing=body['kanji_writing'],
 	                               kana_writing=body['kana_writing'], translation=body['translation'])
 	# as wer are not using a integer id, but a string containing a uuid, auto-increment on db side does not work,
 	# thus we need to explicitly state that we want to insert.
 	new_list_entry.save(force_insert=True)
+	# set correct response status
+	response.status = HTTP_201
 	return new_list_entry.to_dict()
