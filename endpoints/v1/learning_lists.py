@@ -1,5 +1,5 @@
 import hug
-from hug import HTTP_201
+from hug import HTTP_201, HTTP_204
 
 import hug_extensions
 from models import LearningEntry, LearningList
@@ -14,6 +14,7 @@ def get_lists_page(page_index: hug.types.greater_than(-1), page_size: hug.types.
 	return learning_lists_page
 
 
+# TODO: use page size param
 def get_list_meta_and_first_entry_page(list_id: hug.types.uuid, page_size: hug.types.greater_than(0)):
 	learning_list_query = LearningList.get(LearningList.uuid == list_id)
 	learning_list = learning_list_query.to_dict()
@@ -45,6 +46,13 @@ def create_list(body: hug_extensions.types.JSONStructure(list_structure), respon
 	return new_list.to_dict()
 
 
+# TODO: soft delete
+def delete_list(list_id: hug.types.uuid, response):
+	LearningList.delete().where(LearningList.uuid == list_id)
+	response.status = HTTP_204
+	return
+
+
 def get_list_entries_page(list_id: hug.types.uuid, page_index: hug.types.greater_than(-1),
                           page_size: hug.types.greater_than(0)):
 	learning_list_entries_page_query = LearningEntry.select().join(LearningList).where(
@@ -74,3 +82,10 @@ def create_list_entry(list_id: hug.types.uuid, body: hug_extensions.types.JSONSt
 	# set correct response status
 	response.status = HTTP_201
 	return new_list_entry.to_dict()
+
+
+# TODO: soft delete
+def delete_list_entry(list_id: hug.types.uuid, entry_id: hug.types.uuid, response):
+	LearningEntry.delete().where(LearningEntry.learning_list == list_id, LearningEntry.uuid == entry_id)
+	response.status = HTTP_204
+	return
