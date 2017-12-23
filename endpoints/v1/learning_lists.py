@@ -6,8 +6,9 @@ from models import LearningEntry, LearningList
 
 
 def get_lists_page(page_index: hug.types.greater_than(-1), page_size: hug.types.greater_than(0)):
-	learning_lists_meta_page_query = LearningList.select().order_by(LearningList.created_at).paginate(page_index + 1,
-	                                                                                                  page_size)
+	learning_lists_meta_page_query = LearningList.select().order_by(LearningList.created_at.desc()).paginate(
+		page_index + 1,
+		page_size)
 	# iterate over all learning list to trigger their loading (they are lazy-loaded)
 	# and convert them to dictionaries
 	learning_lists_page = [current_learning_list.to_dict() for current_learning_list in learning_lists_meta_page_query]
@@ -15,6 +16,7 @@ def get_lists_page(page_index: hug.types.greater_than(-1), page_size: hug.types.
 
 
 # TODO: use page size param
+# TODO: order entries
 def get_list_meta_and_first_entry_page(list_id: hug.types.uuid, page_size: hug.types.greater_than(0)):
 	learning_list_query = LearningList.get(LearningList.uuid == list_id)
 	learning_list = learning_list_query.to_dict()
@@ -56,8 +58,8 @@ def delete_list(list_id: hug.types.uuid, response):
 def get_list_entries_page(list_id: hug.types.uuid, page_index: hug.types.greater_than(-1),
                           page_size: hug.types.greater_than(0)):
 	learning_list_entries_page_query = LearningEntry.select().join(LearningList).where(
-		LearningList.uuid == list_id).order_by(LearningList.created_at).paginate(page_index + 1,
-	                                                                             page_size)
+		LearningList.uuid == list_id).order_by(LearningList.created_at.desc()).paginate(page_index + 1,
+	                                                                                    page_size)
 	# iterate over all learning entries for the requested list to trigger their loading (they are lazy-loaded)
 	# and convert them to dictionaries
 	learning_list_entries_page = [current_learning_entry.to_dict() for current_learning_entry in
