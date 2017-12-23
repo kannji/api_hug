@@ -1,15 +1,16 @@
 from peewee import *
 
+from models.soft_deletable import SoftDeletable
 from .base import BaseModel, db
 
 
-class LearningList(BaseModel):
+class LearningList(SoftDeletable):
 	name = CharField(max_length=200)
 	description = CharField(max_length=2000, null=True)
 
 
-class LearningEntry(BaseModel):
-	learning_list = ForeignKeyField(LearningList, related_name='learning_entries')
+class LearningEntry(SoftDeletable):
+	learning_list = ForeignKeyField(LearningList, related_name='learning_entries', on_delete='CASCADE')
 	kanji_writing = CharField(max_length=200)
 	kana_writing = CharField(max_length=200)
 	translation = CharField(max_length=400)

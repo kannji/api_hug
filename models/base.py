@@ -1,5 +1,5 @@
-import datetime
 import uuid as uuid
+from datetime import datetime
 
 from peewee import *
 from playhouse.shortcuts import model_to_dict
@@ -10,12 +10,12 @@ db = PostgresqlDatabase('kannji', user='root', password='qwer1234', host='kannji
 
 class BaseModel(Model):
 	uuid = UUIDField(primary_key=True, default=uuid.uuid4)
-	created_at = DateTimeField(default=datetime.datetime.now)
-	updated_at = DateTimeField(default=datetime.datetime.now)
+	created_at = DateTimeField(default=datetime.now)
+	updated_at = DateTimeField(default=datetime.now)
 	
 	# override the save method to update 'updated_at' on every change
 	def save(self, *args, **kwargs):
-		self.updated_at = datetime.datetime.now()
+		self.updated_at = datetime.now()
 		return super(BaseModel, self).save(*args, **kwargs)
 	
 	# override the to_dict method to have to be able to care about the uuid
