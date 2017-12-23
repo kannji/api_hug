@@ -50,7 +50,7 @@ def create_list(body: hug_extensions.types.JSONStructure(list_structure), respon
 
 # TODO: soft delete
 def delete_list(list_id: hug.types.uuid, response):
-	LearningList.delete().where(LearningList.uuid == list_id)
+	LearningList.delete().where(LearningList.uuid == list_id).execute()
 	response.status = HTTP_204
 	return
 
@@ -88,6 +88,6 @@ def create_list_entry(list_id: hug.types.uuid, body: hug_extensions.types.JSONSt
 
 # TODO: soft delete
 def delete_list_entry(list_id: hug.types.uuid, entry_id: hug.types.uuid, response):
-	LearningEntry.delete().where(LearningEntry.learning_list == list_id, LearningEntry.uuid == entry_id)
+	LearningEntry.delete().where(LearningEntry.learning_list == list_id, LearningEntry.uuid == entry_id).execute()
 	response.status = HTTP_204
 	return
